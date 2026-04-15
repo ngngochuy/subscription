@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Đăng ký — SubTrack</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body class="auth">
+  <div class="auth-box">
+    <div class="auth-logo">
+      <div class="brand-mark">S</div>
+      <span class="brand-name">Sub<em>Track</em></span>
+    </div>
+    <h1 class="auth-title">Tạo tài khoản</h1>
+    <p class="auth-sub">Miễn phí · Quản lý đăng ký thông minh</p>
+
+    <!-- STEP 1: Register Form -->
+    <form id="registerForm">
+      <div class="form-group">
+        <label for="username">Tên đăng nhập <span class="required">*</span></label>
+        <input type="text" id="username" placeholder="Tối thiểu 3 ký tự" required autocomplete="username" minlength="3">
+      </div>
+      <div class="form-group">
+        <label for="email">Email <span class="required">*</span></label>
+        <input type="email" id="email" placeholder="email@example.com" required autocomplete="email">
+        <p class="form-hint">Dùng để xác thực tài khoản và nhận thông báo</p>
+      </div>
+      <div class="form-group">
+        <label for="phone">Số điện thoại <span class="required">*</span></label>
+        <input type="tel" id="phone" placeholder="0901234567" required autocomplete="tel" minlength="9">
+      </div>
+      <div class="form-group">
+        <label for="password">Mật khẩu <span class="required">*</span></label>
+        <input type="password" id="password" placeholder="Tối thiểu 6 ký tự" required autocomplete="new-password" minlength="6">
+      </div>
+      <div class="form-group">
+        <label for="confirm">Xác nhận mật khẩu <span class="required">*</span></label>
+        <input type="password" id="confirm" placeholder="Nhập lại mật khẩu" required autocomplete="new-password">
+      </div>
+      <button type="submit" class="btn-submit" id="submitBtn">Tạo tài khoản</button>
+    </form>
+
+    <!-- STEP 2: Verify notice -->
+    <div id="verifyNotice" style="display:none;text-align:center;padding:8px 0">
+      <div style="width:56px;height:56px;border-radius:50%;background:var(--primary-soft, rgba(99,102,241,.12));display:flex;align-items:center;justify-content:center;margin:0 auto 16px">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--primary, #6366f1)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      </div>
+      <h2 style="font-size:18px;font-weight:800;margin-bottom:6px">Kiểm tra email</h2>
+      <p style="font-size:13px;color:var(--text-muted, #5c5c6a);line-height:1.6;margin-bottom:16px">
+        Chúng tôi đã gửi email xác thực đến<br>
+        <strong id="verifyEmail" style="color:var(--text, #ededf0)">—</strong>
+      </p>
+      <p style="font-size:12px;color:var(--text-muted, #5c5c6a);margin-bottom:16px">
+        Bấm vào link trong email để kích hoạt tài khoản. Nếu không thấy, kiểm tra thư mục Spam.
+      </p>
+      <button class="btn-submit" id="resendBtn" style="margin-bottom:12px">Gửi lại email xác thực</button>
+      <div id="resendStatus" style="font-size:12px;min-height:18px"></div>
+    </div>
+
+    <p class="auth-foot">Đã có tài khoản? <a href="/login.html">Đăng nhập</a></p>
+  </div>
+  <div id="toast" class="toast"><span id="toastMsg"></span></div>
+  <script>
+    const form = document.getElementById('registerForm');
+    const notice = document.getElementById('verifyNotice');
+    let registeredEmail = '';
+
+    form.addEventListener('submit', async e => {
+      e.preventDefault();
+      const username = document.getElementById('username').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const password = document.getElementById('password').value;
+      const confirm = document.getElementById('confirm').value;
+
+      if (password !== confirm) return toast('Mật khẩu xác nhận không khớp');
+      const btn = document.getElementById('submitBtn');
+      btn.disabled = true; btn.textContent = 'Đang xử lý...';
+
+      try {
+        const r = await fetch('/api/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password, email, phone })
+        });
+        const d = await r.json();
+        if (d.success) {
+          registeredEmail = email;
+          form.style.display = 'none';
+          notice.style.display = 'block';
+          document.getElementById('verifyEmail').textContent = email;
+          toast(d.message || 'Đăng ký thành công!');
+        } else {
+          toast(d.error || 'Đăng ký thất bại');
+          btn.disabled = false; btn.textContent = 'Tạo tài khoản';
+        }
+      } catch {
+        toast('Lỗi kết nối server');
+        btn.disabled = false; btn.textContent = 'Tạo tài khoản';
+      }
+    });
+
+    document.getElementById('resendBtn').addEventListener('click', async () => {
+      if (!registeredEmail) return;
+      const btn = document.getElementById('resendBtn');
+      const status = document.getElementById('resendStatus');
+      btn.disabled = true; btn.textContent = 'Đang gửi...';
+      try {
+        const r = await fetch('/api/resend-verify', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: registeredEmail })
+        });
+        const d = await r.json();
+        status.innerHTML = d.success
+          ? '<span style="color:var(--green, #22c55e)">Đã gửi lại email xác thực</span>'
+          : '<span style="color:var(--red, #ef4444)">' + (d.error || d.message) + '</span>';
+      } catch {
+        status.innerHTML = '<span style="color:var(--red, #ef4444)">Lỗi kết nối</span>';
+      }
+      btn.disabled = false; btn.textContent = 'Gửi lại email xác thực';
+    });
+
+    function toast(msg) {
+      const t = document.getElementById('toast');
+      document.getElementById('toastMsg').textContent = msg;
+      t.classList.add('show');
+      clearTimeout(t._t); t._t = setTimeout(() => t.classList.remove('show'), 3500);
+    }
+  </script>
+</body>
+</html>

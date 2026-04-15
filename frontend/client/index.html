@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="SubTrack — Quản lý đăng ký thông minh">
+  <title>SubTrack — Dashboard</title>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#09090b">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+</head>
+<body>
+
+<div class="app-layout">
+
+  <!-- ══════ SIDEBAR ══════ -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-mark">S</div>
+      <span class="brand-name">Sub<em>Track</em></span>
+    </div>
+
+    <nav class="sidebar-nav">
+      <button class="nav-link active" data-view="overview">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>
+        <span>Tổng quan</span>
+      </button>
+      <button class="nav-link" data-view="calendar">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        <span>Lịch thanh toán</span>
+      </button>
+      <button class="nav-link" data-view="analytics">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        <span>Phân tích</span>
+      </button>
+      <button class="nav-link" data-view="archive">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5" rx="1"/><line x1="10" y1="12" x2="14" y2="12"/></svg>
+        <span>Lưu trữ</span>
+      </button>
+      <div class="nav-sep"></div>
+      <button class="nav-link" id="navUpgradeTier" style="color:var(--primary);font-weight:700">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        <span>Gói dịch vụ</span>
+      </button>
+      <button class="nav-link" id="navScan">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        <span>Quét hoá đơn</span>
+      </button>
+      <button class="nav-link" id="navProfile">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span>Hồ sơ cá nhân</span>
+      </button>
+      <button class="nav-link" id="navActivity">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        <span>Nhật ký</span>
+      </button>
+      <button class="nav-link" id="navSettings">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        <span>Cài đặt</span>
+      </button>
+    </nav>
+
+    <div class="sidebar-upcoming" id="upcomingSection">
+      <div class="sidebar-upcoming-title">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        Sắp đến hạn
+      </div>
+      <div id="upcomingList"></div>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="user-pill">
+        <div class="user-avatar" id="userAvatar">?</div>
+        <div class="user-details">
+          <div class="name" id="userName">...</div>
+          <div class="role" id="userTier" style="text-transform:uppercase;font-weight:700;color:var(--primary)">Free</div>
+        </div>
+        <button class="icon-btn-sm" id="logoutBtn" title="Đăng xuất" style="margin-left:auto">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ══════ MAIN PANEL ══════ -->
+  <div class="main-panel">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="icon-btn" id="menuToggle" style="display:none">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <h1 id="pageTitle">Tổng quan</h1>
+      </div>
+      <div class="topbar-right">
+        <button class="icon-btn" id="themeToggle" title="Chuyển theme">
+          <svg class="icon" id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+        <button class="icon-btn" id="privacyToggle" title="Ẩn số tiền">
+          <svg class="icon" id="privacyIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        </button>
+        <div class="search-box">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="searchInput" placeholder="Tìm kiếm...  ⌘K">
+        </div>
+        <button class="btn btn-primary" id="addBtn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Thêm gói
+        </button>
+      </div>
+    </header>
+
+    <div class="page-body">
+
+      <!-- ═══ OVERVIEW ════════════════════════════════════════ -->
+      <div class="view-section active" id="viewOverview">
+
+        <div class="stats-grid" id="statsRow">
+          <div class="stat-card">
+            <div class="stat-icon si-primary">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            </div>
+            <div class="stat-label">Chi tiêu / tháng</div>
+            <div class="stat-value blur-target" id="sTotal">—</div>
+            <div class="stat-sub blur-target" id="sYearly">Năm: —</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon si-green">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+            </div>
+            <div class="stat-label">Gói đang dùng</div>
+            <div class="stat-value" id="sCount">—</div>
+            <div class="stat-sub" id="sCycleBreak">—</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon si-amber">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            </div>
+            <div class="stat-label">Sắp hết hạn</div>
+            <div class="stat-value" id="sUrgent">—</div>
+            <div class="stat-sub">Trong 7 ngày tới</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon si-red">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </div>
+            <div class="stat-label">Chi phí / người</div>
+            <div class="stat-value blur-target" id="sPersonal">—</div>
+            <div class="stat-sub">Quy về tháng</div>
+          </div>
+        </div>
+
+        <!-- Budget -->
+        <div class="budget-bar" id="budgetBar">
+          <div class="budget-header">
+            <span>Ngân sách tháng: <strong class="blur-target" id="budgetLabel">—</strong></span>
+            <span class="blur-target" id="budgetPercent">—</span>
+          </div>
+          <div class="budget-meter"><div class="budget-meter-fill" id="budgetFill"></div></div>
+        </div>
+
+        <!-- Charts -->
+        <div class="chart-area" id="chartArea">
+          <div class="chart-card">
+            <h3>Chi tiêu theo danh mục</h3>
+            <div class="chart-canvas-wrap">
+              <canvas id="catChart"></canvas>
+            </div>
+          </div>
+          <div class="insights-card" id="insightsCard">
+            <h3>Thông tin nổi bật</h3>
+          </div>
+        </div>
+
+        <!-- Toolbar -->
+        <div class="toolbar">
+          <div class="toolbar-group">
+            <div class="filter-pills" id="filterPills">
+              <button class="pill active" data-f="all">Tất cả</button>
+              <button class="pill" data-f="urgent">Sắp hết</button>
+              <button class="pill" data-f="trial">Dùng thử</button>
+              <button class="pill" data-f="entertainment">Giải trí</button>
+              <button class="pill" data-f="work">Công việc</button>
+              <button class="pill" data-f="storage">Lưu trữ</button>
+            </div>
+          </div>
+          <div class="toolbar-group">
+            <select class="sort-select" id="sortSelect">
+              <option value="nextDate">Ngày hết hạn</option>
+              <option value="price">Giá cao nhất</option>
+              <option value="name">Tên A-Z</option>
+            </select>
+            <div class="view-toggle">
+              <button class="view-toggle-btn active" id="viewGrid">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+              </button>
+              <button class="view-toggle-btn" id="viewList">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+              </button>
+            </div>
+            <button class="btn btn-ghost btn-sm" id="exportBtn">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              CSV
+            </button>
+          </div>
+        </div>
+
+        <div id="mainContainer"></div>
+      </div>
+
+      <!-- ═══ CALENDAR ════════════════════════════════════════ -->
+      <div class="view-section" id="viewCalendar"></div>
+
+      <!-- ═══ ANALYTICS ═══════════════════════════════════════ -->
+      <div class="view-section" id="viewAnalytics"></div>
+
+      <!-- ═══ ARCHIVE ═════════════════════════════════════════ -->
+      <div class="view-section" id="viewArchive"></div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ══════ MODAL: ADD / EDIT ══════ -->
+<div class="modal" id="addModal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h2>
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        <span id="modalTitle">Thêm gói đăng ký</span>
+      </h2>
+      <button class="modal-close" id="closeAdd">&times;</button>
+    </div>
+    <div class="modal-body">
+      <form id="addForm">
+        <input type="hidden" id="editId">
+
+        <div class="form-group">
+          <label>Chọn nhanh dịch vụ</label>
+          <div class="preset-select" id="presetWrap">
+            <div class="preset-trigger" id="presetTrigger">
+              <span class="label" id="presetLabel">Chọn dịch vụ phổ biến...</span>
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+            </div>
+            <div class="preset-dropdown" id="presetDropdown"></div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="fName">Tên dịch vụ <span class="required">*</span></label>
+            <input type="text" id="fName" placeholder="Netflix, Spotify..." required autocomplete="off">
+          </div>
+          <div class="form-group">
+            <label for="fAccount">Email / Tài khoản</label>
+            <input type="text" id="fAccount" placeholder="email@example.com">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="fStart">Ngày bắt đầu <span class="required">*</span></label>
+            <input type="date" id="fStart" required>
+          </div>
+          <div class="form-group">
+            <label for="fCycle">Chu kỳ thanh toán</label>
+            <select id="fCycle">
+              <option value="monthly">Hàng tháng</option>
+              <option value="yearly">Hàng năm</option>
+              <option value="quarterly">3 tháng / lần</option>
+              <option value="weekly">Hàng tuần</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row-3">
+          <div class="form-group">
+            <label for="fPrice">Giá / kỳ (đ) <span class="required">*</span></label>
+            <input type="number" id="fPrice" placeholder="0" min="0" required>
+          </div>
+          <div class="form-group">
+            <label for="fCycleCount">Số kỳ trả trước</label>
+            <input type="number" id="fCycleCount" value="1" min="1" max="36">
+          </div>
+          <div class="form-group">
+            <label for="fMembers">Số người chia</label>
+            <input type="number" id="fMembers" value="1" min="1">
+          </div>
+        </div>
+
+        <div class="expiry-preview" id="expiryPreview">Hết hạn dự kiến: <span id="expiryVal">—</span></div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="fCategory">Danh mục</label>
+            <select id="fCategory">
+              <option value="entertainment">Giải trí</option>
+              <option value="work">Công việc</option>
+              <option value="storage">Lưu trữ</option>
+              <option value="social">Mạng xã hội</option>
+              <option value="gaming">Gaming</option>
+              <option value="education">Học tập</option>
+              <option value="other" selected>Khác</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="fPayment">Thanh toán qua</label>
+            <input type="text" id="fPayment" placeholder="Visa, MoMo...">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Phương thức nhanh</label>
+          <div class="pay-options" id="payChips">
+            <button type="button" class="pay-chip" data-m="Visa/MC">Visa/MC</button>
+            <button type="button" class="pay-chip" data-m="MoMo">MoMo</button>
+            <button type="button" class="pay-chip" data-m="ZaloPay">ZaloPay</button>
+            <button type="button" class="pay-chip" data-m="VNPay">VNPay</button>
+            <button type="button" class="pay-chip" data-m="Chuyển khoản">CK Ngân hàng</button>
+            <button type="button" class="pay-chip" data-m="Tiền mặt">Tiền mặt</button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Nhắc nhở trước khi hết hạn</label>
+          <div class="reminder-chips" id="fReminders">
+            <label class="rchip"><input type="checkbox" value="7day"> 7 ngày</label>
+            <label class="rchip"><input type="checkbox" value="3day" checked> 3 ngày</label>
+            <label class="rchip"><input type="checkbox" value="1day" checked> 1 ngày</label>
+            <label class="rchip"><input type="checkbox" value="5h" checked> 5 giờ</label>
+            <label class="rchip"><input type="checkbox" value="1h" checked> 1 giờ</label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="fNotes">Ghi chú</label>
+          <textarea id="fNotes" placeholder="Thông tin bổ sung..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="toggle-row" for="fTrial">
+            <input type="checkbox" id="fTrial">
+            <span class="toggle-track"></span>
+            <span class="toggle-label">Gói dùng thử (Trial)</span>
+          </label>
+        </div>
+
+        <button type="submit" class="btn-submit" id="submitBtn">Lưu gói đăng ký</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ MODAL: SCAN ══════ -->
+<div class="modal" id="scanModal">
+  <div class="modal-box modal-box--wide">
+    <div class="modal-head">
+      <h2>
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        Quét hoá đơn
+      </h2>
+      <button class="modal-close" id="closeScan">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div id="scanStep1">
+        <div class="scan-zone" id="scanDrop">
+          <input type="file" id="scanFile" accept="image/*" style="display:none">
+          <input type="file" id="scanCamera" accept="image/*" capture="environment" style="display:none">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-muted)"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          <h3>Kéo & thả ảnh hoá đơn</h3>
+          <p>Hỗ trợ JPG, PNG, WEBP</p>
+          <div style="display:flex;gap:8px;justify-content:center;margin-top:16px">
+            <button type="button" class="btn btn-ghost" onclick="document.getElementById('scanFile').click()">Chọn file</button>
+            <button type="button" class="btn btn-primary" onclick="document.getElementById('scanCamera').click()">Chụp ảnh</button>
+          </div>
+        </div>
+      </div>
+      <div id="scanStep2" style="display:none;text-align:center;padding:32px">
+        <div class="scan-spinner"></div>
+        <p id="scanStatus" style="color:var(--text-muted);font-size:13px">Đang xử lý...</p>
+      </div>
+      <div id="scanStep3" style="display:none">
+        <img id="scanPreview" class="scan-preview" src="" alt="Preview">
+        <div class="form-group">
+          <label>Văn bản nhận diện (OCR)</label>
+          <div class="scan-raw" id="scanRaw"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label for="sr-name">Tên dịch vụ</label><input type="text" id="sr-name"></div>
+          <div class="form-group"><label for="sr-price">Số tiền</label><input type="number" id="sr-price"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label for="sr-date">Ngày</label><input type="date" id="sr-date"></div>
+          <div class="form-group"><label for="sr-account">Email</label><input type="text" id="sr-account"></div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:12px">
+          <button type="button" class="btn btn-primary" id="scanConfirmBtn" style="flex:1">Xác nhận & Thêm</button>
+          <button type="button" class="btn btn-ghost" id="scanRetryBtn">Quét lại</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ MODAL: SETTINGS ══════ -->
+<div class="modal" id="settingsModal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h2>
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Cài đặt
+      </h2>
+      <button class="modal-close" id="closeSettings">&times;</button>
+    </div>
+    <div class="modal-body">
+      <form id="settingsForm">
+        <div class="form-group">
+          <label for="tgChatId">Telegram Chat ID</label>
+          <input type="text" id="tgChatId" placeholder="VD: 123456789" style="font-family:'JetBrains Mono',monospace">
+          <p class="form-hint">Nhắn /start cho @userinfobot để lấy ID</p>
+        </div>
+        <div class="form-group">
+          <label for="userEmail">Email nhận thông báo</label>
+          <input type="email" id="userEmail" placeholder="email@example.com">
+        </div>
+        <div class="form-group">
+          <label for="budgetInput">Ngân sách hàng tháng (đ)</label>
+          <input type="number" id="budgetInput" placeholder="VD: 500000" min="0">
+          <p class="form-hint">Hệ thống sẽ cảnh báo khi chi tiêu vượt ngưỡng</p>
+        </div>
+        <div class="form-group" style="margin-top:20px;padding-top:20px;border-top:1px solid var(--border)">
+          <label style="display:flex;justify-content:space-between;align-items:center">
+            <span>Màu chủ đạo (Premium Theme)</span>
+            <span id="themeLock" style="font-size:10px;background:var(--amber-soft);color:var(--amber);padding:2px 8px;border-radius:12px;display:none">ULTRA</span>
+          </label>
+          <div id="themeList" style="display:flex;gap:12px;margin-top:12px">
+            <div class="theme-circle" data-theme="#6366f1" style="background:#6366f1"></div>
+            <div class="theme-circle" data-theme="#22c55e" style="background:#22c55e"></div>
+            <div class="theme-circle" data-theme="#f43f5e" style="background:#f43f5e"></div>
+            <div class="theme-circle" data-theme="#eab308" style="background:#eab308"></div>
+            <div class="theme-circle" data-theme="#a855f7" style="background:#a855f7"></div>
+          </div>
+          <p class="form-hint" id="themeHint" style="margin-top:12px">Chọn màu sắc cá nhân hóa cho giao diện.</p>
+        </div>
+        <div class="form-group">
+          <label for="bankId">Ngân hàng (VietQR)</label>
+          <select id="bankId">
+            <option value="">-- Không sử dụng --</option>
+            <option value="VCB">Vietcombank</option>
+            <option value="TCB">Techcombank</option>
+            <option value="MB">MBBank</option>
+            <option value="ACB">ACB</option>
+            <option value="TPB">TPBank</option>
+            <option value="VPB">VPBank</option>
+            <option value="BIDV">BIDV</option>
+            <option value="VIB">VIB</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="bankAccount">Số tài khoản</label>
+          <input type="text" id="bankAccount" placeholder="VD: 0123456789" style="font-family:'JetBrains Mono',monospace">
+        </div>
+        <div class="form-group">
+          <label for="bankName">Tên chủ TK</label>
+          <input type="text" id="bankName" placeholder="NGUYEN VAN A">
+        </div>
+        <!-- Gmail Connect Section -->
+        <div style="margin-top:20px;padding-top:20px;border-top:1px solid var(--border)">
+          <label style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <span style="font-weight:600">Kết nối Gmail</span>
+          </label>
+          <p class="form-hint" style="margin-bottom:12px">Tự động chuyển tiếp email từ Netflix, Spotify, Apple... về hộp thư admin. SubTrack sẽ tự xác nhận, bạn không cần làm gì thêm.</p>
+          <div id="gmailConnectStatus" style="display:none;padding:10px 14px;border-radius:var(--r-md);font-size:13px;margin-bottom:12px"></div>
+          <button type="button" id="gmailConnectBtn" class="btn btn-primary" style="width:100%;display:flex;align-items:center;justify-content:center;gap:8px" onclick="connectGmail()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            Kết nối Gmail của tôi
+          </button>
+        </div>
+        <button type="submit" class="btn-submit">Lưu cài đặt</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ MODAL: VIETQR ══════ -->
+<div class="modal" id="qrModal">
+  <div class="modal-box" style="max-width:400px">
+    <div class="modal-head">
+      <h2>
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 7h.01"/><path d="M17 7h.01"/><path d="M7 17h.01"/><path d="M17 17h.01"/></svg>
+        Mã QR chia tiền
+      </h2>
+      <button class="modal-close" onclick="closeModal('qrModal')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="qr-container" id="qrContent"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ COMMAND PALETTE ══════ -->
+<div class="cmd-backdrop" id="cmdPalette">
+  <div class="cmd-box">
+    <div class="cmd-input-wrap">
+      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input class="cmd-input" id="cmdInput" placeholder="Nhập lệnh hoặc tìm kiếm..." autocomplete="off">
+      <span style="font-size:10px;color:var(--text-muted);font-family:'JetBrains Mono',monospace;background:var(--surface-3);padding:2px 6px;border-radius:4px">ESC</span>
+    </div>
+    <div class="cmd-results" id="cmdResults"></div>
+  </div>
+</div>
+
+<!-- ══════ MODAL: PROFILE ══════ -->
+<div class="modal" id="profileModal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h2><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Hồ sơ cá nhân</h2>
+      <button class="modal-close" onclick="closeModal('profileModal')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <form id="profileForm">
+        <div class="form-group"><label>Tên đăng nhập</label><input type="text" id="pUsername" disabled style="opacity:.6"></div>
+        <div class="form-group"><label>Email</label><input type="email" id="pEmail" placeholder="email@example.com"></div>
+        <div class="form-group"><label>Số điện thoại</label><input type="tel" id="pPhone" placeholder="0901234567"></div>
+        <button type="submit" class="btn btn-primary" style="width:100%">Cập nhật hồ sơ</button>
+      </form>
+      <div class="nav-sep" style="margin:16px 0"></div>
+      <h3 style="font-size:14px;font-weight:700;margin-bottom:12px">Đổi mật khẩu</h3>
+      <form id="passwordForm">
+        <div class="form-group"><label>Mật khẩu hiện tại</label><input type="password" id="pwCurrent" required></div>
+        <div class="form-group"><label>Mật khẩu mới</label><input type="password" id="pwNew" required minlength="6" placeholder="Tối thiểu 6 ký tự"></div>
+        <button type="submit" class="btn btn-ghost" style="width:100%">Đổi mật khẩu</button>
+      </form>
+      <div id="pwStatus" style="font-size:12px;margin-top:8px;min-height:18px"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ MODAL: UPGRADE (TIERS) ══════ -->
+<div class="modal" id="upgradeModal">
+  <div class="modal-box modal-box--wide" style="max-width:800px">
+    <div class="modal-head">
+      <h2>🚀 Nâng cấp tài khoản</h2>
+      <button class="modal-close" onclick="closeModal('upgradeModal')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div style="text-align:center;margin-bottom:24px;color:var(--text-sub)">Chọn gói dịch vụ phù hợp với nhu cầu quản lý đăng ký của bạn.</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px" id="pricingTable">
+        <!-- Render from JS -->
+        <div style="text-align:center;color:var(--text-muted);padding:40px;width:100%">Đang tải các gói dịch vụ...</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="activityModal">
+  <div class="modal-box modal-box--wide">
+    <div class="modal-head">
+      <h2><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> Nhật ký hoạt động</h2>
+      <button class="modal-close" onclick="closeModal('activityModal')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="activity-list" id="activityList">Đang tải...</div>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast">
+  <svg class="icon" id="toastIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+  <span id="toastMsg"></span>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
